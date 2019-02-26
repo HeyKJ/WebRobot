@@ -43,8 +43,8 @@ public class TaobaoService extends HtmlParser {
 		jsonData.put("img_350", getImg("350x350"));
 		//상품 내용(이미지)
 		jsonData.put("content", getContent());
-		//상품 옵션
-		jsonData.put("options", getItemOptions());
+		//상품 옵션은 상세 정보에 모두 들어있으므로 사용 안함
+		//jsonData.put("options", getItemOptions());
 		//상품 상세 정보
 		jsonData.put("detail_infos", getDetailInfo());
 		return jsonData;

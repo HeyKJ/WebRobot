@@ -45,8 +45,8 @@ public class AlibabaService extends HtmlParser {
 		jsonData.put("img_350", getImg("350x350"));
 		//상품 내용(이미지)
 		jsonData.put("content", getContent());
-		//상품 옵션
-		jsonData.put("options", getItemOptions());
+		//상품 옵션은 상세 정보에 모두 들어있으므로 사용 안함
+		//jsonData.put("options", getItemOptions());
 		//상품 상세 정보
 		jsonData.put("detail_infos", getDetailInfo());
 		return jsonData;
@@ -71,8 +71,18 @@ public class AlibabaService extends HtmlParser {
 	public JSONArray getPrice() {
 		//.price -> td -> attr:data-range
 		//data-range="{"begin":"2","end":"4","price":"65.00"}"
+		//price-original-sku
 		JSONArray priceArray = new JSONArray();
-		List<WebElement> priceList = getElementByClassName("price").findElements(By.tagName("td"));
+		List<WebElement> priceList = getElementsByCssSelector(".price td[data-range]");
+		if(priceList.size() == 0) { //없을 경우 .price-original-sku 데이터에 상품가가 있음
+			JSONObject data = new JSONObject();
+			data.put("price", removeHTMLTag(getElementByClassName("price-original-sku").getAttribute("innerHTML")));
+			data.put("begin", "");
+			data.put("end", "");
+			priceArray.add(data);
+		}
+
+		//어차피 size 0이면 for문 진입암함
 		for(int i=0; i<priceList.size(); i++) {
 			WebElement td = priceList.get(i);
 			String dataRange = td.getAttribute("data-range");
@@ -149,7 +159,12 @@ public class AlibabaService extends HtmlParser {
 		JSONArray optionArray = new JSONArray();
 		JSONObject optionData = new JSONObject();
 		//옷 상품에서는 leading 옵션은 색상관련 옵션임
-		WebElement leading = getElementByCssSelector(".offerdetail_ditto_purchasing .obj-leading");
+		//옵션이 없는 상품도 있기때문에 list형태로 불러와야 Exception이 발생안함
+		WebElement leading = null;
+		List<WebElement> leadingList = getElementsByCssSelector(".offerdetail_ditto_purchasing .obj-leading"); 
+		if(leadingList.size() > 0) leading = leadingList.get(0); 
+		else return null;
+
 		optionData.put("name", leading.findElement(By.className("obj-title")).getText());
 		JSONArray optionValueArray = new JSONArray(); //옵션 값은 여러개
 		leading.findElements(By.cssSelector(".unit-detail-spec-operator")).forEach(div -> {

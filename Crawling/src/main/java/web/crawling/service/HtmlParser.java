@@ -36,6 +36,11 @@ public class HtmlParser {
 		Thread.sleep(1000 * delay);
 	}
 	
+	//webDriver 반환
+	public WebDriver getWebDriver() {
+		return this.webDriver;
+	}
+	
 	//크롬 GPU OFF 옵션 반환
 	private static ChromeOptions getDefaultOptions() {
 		//크롬 옵션 설정
