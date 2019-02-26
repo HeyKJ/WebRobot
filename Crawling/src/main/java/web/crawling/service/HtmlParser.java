@@ -9,7 +9,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-public abstract class HtmlParser {
+public class HtmlParser {
 
 	protected WebDriver webDriver;
 	protected int delay;
@@ -47,7 +47,10 @@ public abstract class HtmlParser {
 	}
 
 	//파싱 실행(오버라이드 메서드)
-	public abstract JSONObject getJsonData();
+	public JSONObject getJsonData() {
+		//자식 클래스가 오버라이드 할거라서 아무것도 안함
+		return null;
+	}
 	
 	protected WebElement getElementById(String id) {
 		return webDriver.findElement(By.id(id));
